@@ -19,14 +19,15 @@ const App = () => {
   const [taskData, setTaskData] = useState(TASKS);
 
   const handleIsTaskComplete = (id) => {
-    const updatedTasks = taskData.map(task => {
-      if (task.id === id) {
-        return { ...task, isComplete: !task.isComplete };
-      } else {
-        return task;
-      }
+    setTaskData(taskData => {
+      return taskData.map(task => {
+        if (task.id === id) {
+          return { ...task, isComplete: !task.isComplete };
+        } else {
+          return task;
+        }
+      });
     });
-    setTaskData(updatedTasks);
   };
 
   const handleRemoveTask = (id) => {
