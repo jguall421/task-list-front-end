@@ -34,10 +34,6 @@ const convertFromAPI = (apiTask) => {
   delete newTask.is_complete;
   return newTask;
 };
-const completeTaskAPI = id => {
-  return axios.patch(`${kbaseURL}/tasks/${id}/mark_complete`)
-    .catch(error => console.log(error));
-};
 
 const removeTaskAPI = id => {
   return axios.delete(`${kbaseURL}/tasks/${id}`)
@@ -55,10 +51,17 @@ const App = () => {
     });
   }, []);
 
+  const completeTaskAPI = id => {
+    const task = taskData.find(task => task.id === id);
+    const isCompleteEndpoint = task.isComplete ? 'mark_incomplete' : 'mark_complete';
+    return axios.patch(`${kbaseURL}/tasks/${id}/${isCompleteEndpoint}`)
+      .catch(error => console.log(error));
+  };
+
   const handleIsTaskComplete = (id) => {
     return completeTaskAPI(id)
       .then(() => {
-        return setTaskData(taskData => {
+        setTaskData(taskData => {
           return taskData.map(task => task.id === id ? { ...task, isComplete: !task.isComplete } : task);
         });
       });
@@ -67,7 +70,7 @@ const App = () => {
   const handleRemoveTask = (id) => {
     return removeTaskAPI(id)
       .then(() => {
-        return setTaskData(taskData => {
+        setTaskData(taskData => {
           return taskData.filter(task => task.id != id);
         });
       });
