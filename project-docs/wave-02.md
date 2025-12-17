@@ -14,6 +14,7 @@ In Wave 02, we will explore the starter code for Task List Front End. For this w
 Read through the code in `App.jsx`, `TaskList.jsx` and `Task.jsx` and their style sheets to understand how data and events are being handled. You may use the following questions and suggestions to guide your exploration:
 
 1. How is the ~~strikethrough~~ style applied when the task title is clicked?
+    - When the page renders, the state of the property isComplete determines the css that is applied to the element by adjusting the button's class name 
     - Consider updating the appropriate rule sets to change the text or background color when a task is marked complete.
 
 The suggestions above should give you a strong foundation for working with Task List Front End. As time allows, follow your curiosity to explore more of the code and features.

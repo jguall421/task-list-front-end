@@ -1,6 +1,7 @@
 import TaskList from './components/TaskList.jsx';
 import './App.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const TASKS = [
   {
@@ -15,25 +16,61 @@ const TASKS = [
   },
 ];
 
+const kbaseURL = 'http://localhost:5000';
+
+const getAllTasksAPI = () => {
+  return axios.get(`${kbaseURL}/tasks`)
+    .then(response => response.data)
+    .catch(error => console.log(error));
+};
+
+const convertFromAPI = (apiTask) => {
+  const newTask = {
+    ...apiTask,
+    goalId: apiTask.goal_id ? apiTask.goal_id : null,
+    isComplete: apiTask.is_complete ? apiTask.is_complete : false,
+  };
+  delete newTask.goal_id;
+  delete newTask.is_complete;
+  return newTask;
+};
+const completeTaskAPI = id => {
+  return axios.patch(`${kbaseURL}/tasks/${id}/mark_complete`)
+    .catch(error => console.log(error));
+};
+
+const removeTaskAPI = id => {
+  return axios.delete(`${kbaseURL}/tasks/${id}`)
+    .catch(error => console.log(error));
+};
+
+
 const App = () => {
-  const [taskData, setTaskData] = useState(TASKS);
+  const [taskData, setTaskData] = useState([]);
+
+  useEffect(() => {
+    getAllTasksAPI().then(tasks => {
+      const newTasks = tasks.map(convertFromAPI);
+      setTaskData(newTasks);
+    });
+  }, []);
 
   const handleIsTaskComplete = (id) => {
-    setTaskData(taskData => {
-      return taskData.map(task => {
-        if (task.id === id) {
-          return { ...task, isComplete: !task.isComplete };
-        } else {
-          return task;
-        }
+    return completeTaskAPI(id)
+      .then(() => {
+        return setTaskData(taskData => {
+          return taskData.map(task => task.id === id ? { ...task, isComplete: !task.isComplete } : task);
+        });
       });
-    });
   };
 
   const handleRemoveTask = (id) => {
-    setTaskData(prevTaskData => {
-      return prevTaskData.filter(task => task.id != id);
-    });
+    return removeTaskAPI(id)
+      .then(() => {
+        return setTaskData(taskData => {
+          return taskData.filter(task => task.id != id);
+        });
+      });
   };
 
   return (
@@ -42,7 +79,7 @@ const App = () => {
         <h1>Ada&apos;s Task List</h1>
       </header>
       <main>
-        <div>{<TaskList tasks={taskData} onIsComplete={handleIsTaskComplete} onRemoveTask={handleRemoveTask}/>}</div>
+        <div>{<TaskList tasks={taskData} onIsComplete={handleIsTaskComplete} onRemoveTask={handleRemoveTask} />}</div>
       </main>
     </div>
   );
