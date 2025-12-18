@@ -1,0 +1,38 @@
+import { useState } from 'react';
+import PropTypes from 'prop-types';
+
+const NewTaskForm = ({ onHandleSubmit }) => {
+  const[title, setTitle] = useState('');
+
+  const handleTaskChange= (event) => {
+    setTitle(event.target.value);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const newTask = {
+      title,
+      description: 'FINISH ADA LEARN READINGS'
+    };
+    onHandleSubmit(newTask);
+    setTitle('');
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <label htmlFor="title"> Task: </label>
+      <input
+        type="text" id="title" name="title" value={title} onChange={handleTaskChange}
+      />
+      <div>
+        <input type="submit" value="Add Task"/>
+      </div>
+    </form>
+  );
+};
+
+NewTaskForm.propTypes = {
+  onHandleSubmit: PropTypes.func.isRequired,
+};
+
+export default NewTaskForm;

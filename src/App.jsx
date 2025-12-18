@@ -1,7 +1,9 @@
 import TaskList from './components/TaskList.jsx';
+import NewTaskForm from './components/NewTaskForm.jsx'
 import './App.css';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+
 
 const TASKS = [
   {
@@ -73,12 +75,22 @@ const App = () => {
       });
   };
 
+  const handleSubmit = (data) => {
+    axios.post(`${kbaseURL}/tasks`, data)
+      .then((result) => {
+        setTaskData((prevTasks) => [convertFromAPI(result.data), ...prevTasks])
+          .catch((e) => console.log(e));
+      });
+  };
+
+
   return (
     <div className="App">
       <header className="App-header">
         <h1>Ada&apos;s Task List</h1>
       </header>
       <main>
+        <NewTaskForm onHandleSubmit={handleSubmit}/>
         <div>{<TaskList tasks={taskData} onIsComplete={handleIsTaskComplete} onRemoveTask={handleRemoveTask} />}</div>
       </main>
     </div>
