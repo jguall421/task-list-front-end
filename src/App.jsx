@@ -1,22 +1,8 @@
 import TaskList from './components/TaskList.jsx';
-import NewTaskForm from './components/NewTaskForm.jsx'
+import NewTaskForm from './components/NewTaskForm.jsx';
 import './App.css';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-
-
-const TASKS = [
-  {
-    id: 1,
-    title: 'Mow the lawn',
-    isComplete: false,
-  },
-  {
-    id: 2,
-    title: 'Cook Pasta',
-    isComplete: true,
-  },
-];
 
 const kbaseURL = 'http://localhost:5000';
 
@@ -81,9 +67,8 @@ const App = () => {
   const handleSubmit = (data) => {
     axios.post(`${kbaseURL}/tasks`, data)
       .then((result) => {
-        setTaskData((prevTasks) => [convertFromAPI(result.data), ...prevTasks])
-          .catch((e) => console.log(e));
-      });
+        setTaskData((prevTasks) => [convertFromAPI(result.data), ...prevTasks]);
+      }).catch((e) => console.log(e));
   };
 
 

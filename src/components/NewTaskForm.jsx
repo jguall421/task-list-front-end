@@ -1,29 +1,60 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 
-const NewTaskForm = ({ onHandleSubmit }) => {
-  const[title, setTitle] = useState('');
+const kDefaults = {
+  title: '',
+  description: ''
+};
 
-  const handleTaskChange= (event) => {
-    setTitle(event.target.value);
+const NewTaskForm = ({ onHandleSubmit }) => {
+  const[formData, setFormData] = useState(kDefaults);
+
+  const handleChange = (event) => {
+    const inputValue = event.target.value;
+    const inputName = event.target.name;
+
+    setFormData(formData => {
+      return {
+        ...formData,
+        [inputName]: inputValue
+      };
+    });
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const newTask = {
-      title,
-      description: 'FINISH ADA LEARN READINGS'
-    };
-    onHandleSubmit(newTask);
-    setTitle('');
+    onHandleSubmit(formData);
+    setFormData(kDefaults);
+  };
+
+  const makeControlledInput = (inputName) => {
+    return (
+      <div key={`input-${inputName}`}>
+        <label htmlFor={`input-${inputName}`}>Task {inputName.charAt(0).toUpperCase() + inputName.slice(1)}: </label>
+        <input
+          type='text'
+          id={`input-${inputName}`}
+          name={inputName}
+          value={formData[inputName]}
+          onChange={handleChange}
+        />
+      </div>
+    );
+  };
+
+  const makeAllInputs = (formData) => {
+    const inputs = [];
+    for (const key of Object.keys(formData)) {
+      inputs.push(makeControlledInput(key));
+    } return inputs;
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <label htmlFor="title"> Task: </label>
-      <input
-        type="text" id="title" name="title" value={title} onChange={handleTaskChange}
-      />
+      {/* {makeControlledInput('title')}
+      {makeControlledInput('description')} */}
+
+      { makeAllInputs(formData) }
       <div>
         <input type="submit" value="Add Task"/>
       </div>
